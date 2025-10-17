@@ -11,7 +11,12 @@ RUN echo 'net.core.rmem_max = 67108864' >> /etc/sysctl.conf && \
     
 # Copy the VLESS config into the container
 COPY config.json /etc/v2ray/config.json
-  
+
+# Health check endpoint
+RUN echo '#!/bin/sh' > /health.sh && \\
+    echo 'wget --no-verbose --tries=1 --spider http://localhost:8080/video || exit 1' >> /health.sh && \\
+    chmod +x /health.sh  
+    
 # Run V2Ray with the config file
 CMD ["v2ray", "run", "-config", "/etc/v2ray/config.json"]
 
